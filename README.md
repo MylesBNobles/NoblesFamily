@@ -30,22 +30,14 @@ A mobile-first PWA (Progressive Web App) for the Nobles family scavenger hunt. W
 | Legendary Challenges | 50 each |
 | Grand Challenge | 100 each |
 
-## Deploy to GitHub Pages
+## Live URLs
 
-1. Create a new repo on GitHub: `nobles-family-hunt`
-2. Push this folder:
-   ```bash
-   cd nobles-family-hunt
-   git init
-   git add .
-   git commit -m "Initial commit — Nobles Family Hunt 2026"
-   git branch -M main
-   git remote add origin https://github.com/MylesBNobles/NoblesFamily.git
-   git push -u origin main
-   ```
-3. In the repo Settings → Pages → Source: **Deploy from branch → main → / (root)**
-4. Your URL: `https://mylesbnobles.github.io/NoblesFamily/`
-5. Share the URL with the family **before the trip** so everyone loads it once on WiFi
+| URL | Use |
+|---|---|
+| https://noblesfamilyvacation.com | Share this with the family |
+| https://nobles-family.vercel.app | Backup / Vercel dashboard |
+
+Hosted on Vercel — auto-deploys on every push to `main`.
 
 ## Before the Trip
 

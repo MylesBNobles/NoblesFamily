@@ -1,23 +1,52 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0a1628"/>
-      <stop offset="100%" stop-color="#0d2240"/>
-    </linearGradient>
-    <linearGradient id="n" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#00d4aa"/>
-      <stop offset="100%" stop-color="#00a882"/>
-    </linearGradient>
+    <radialGradient id="bg" cx="50%" cy="40%" r="75%">
+      <stop offset="0%" stop-color="#2D1B69"/>
+      <stop offset="100%" stop-color="#07051C"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFD700" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#FFD700" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pinkglow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF6EC7" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#FF6EC7" stop-opacity="0"/>
+    </radialGradient>
   </defs>
+
+  <!-- Background rounded rect -->
   <rect width="192" height="192" rx="42" fill="url(#bg)"/>
-  <circle cx="96" cy="96" r="68" fill="none" stroke="rgba(0,212,170,0.18)" stroke-width="2"/>
-  <circle cx="96" cy="96" r="52" fill="none" stroke="rgba(0,212,170,0.12)" stroke-width="1.5"/>
-  <text x="96" y="37" text-anchor="middle" fill="rgba(0,212,170,0.75)" font-size="13" font-weight="700" font-family="system-ui,sans-serif">N</text>
-  <text x="96" y="164" text-anchor="middle" fill="rgba(0,212,170,0.35)" font-size="11" font-family="system-ui,sans-serif">S</text>
-  <text x="163" y="101" text-anchor="middle" fill="rgba(0,212,170,0.35)" font-size="11" font-family="system-ui,sans-serif">E</text>
-  <text x="29" y="101" text-anchor="middle" fill="rgba(0,212,170,0.35)" font-size="11" font-family="system-ui,sans-serif">W</text>
-  <polygon points="96,42 100,96 96,106 92,96" fill="url(#n)"/>
-  <polygon points="96,150 100,96 96,86 92,96" fill="#ff6b6b" opacity="0.7"/>
-  <circle cx="96" cy="96" r="9" fill="#ffd166"/>
-  <circle cx="96" cy="96" r="4" fill="#0a1628"/>
+
+  <!-- Colour orbs -->
+  <ellipse cx="40"  cy="40"  rx="60" ry="60" fill="url(#pinkglow)"/>
+  <ellipse cx="152" cy="152" rx="55" ry="55" fill="url(#glow)" opacity="0.6"/>
+
+  <!-- Star field -->
+  <circle cx="18"  cy="20"  r="1.5" fill="white"   opacity="0.75"/>
+  <circle cx="44"  cy="11"  r="1"   fill="white"   opacity="0.55"/>
+  <circle cx="78"  cy="18"  r="2"   fill="#FFD700" opacity="0.85"/>
+  <circle cx="118" cy="13"  r="1"   fill="white"   opacity="0.60"/>
+  <circle cx="155" cy="22"  r="1.5" fill="white"   opacity="0.55"/>
+  <circle cx="176" cy="10"  r="2"   fill="#FFD700" opacity="0.75"/>
+  <circle cx="14"  cy="58"  r="1"   fill="white"   opacity="0.40"/>
+  <circle cx="178" cy="52"  r="1"   fill="white"   opacity="0.40"/>
+  <circle cx="168" cy="78"  r="1.5" fill="#FF6EC7" opacity="0.50"/>
+
+  <!-- Gold glow halo behind Mickey -->
+  <circle cx="96" cy="110" r="56" fill="url(#glow)"/>
+
+  <!-- Mickey silhouette — left ear -->
+  <circle cx="57"  cy="68"  r="30" fill="#0a0a0a"/>
+  <!-- Mickey silhouette — right ear -->
+  <circle cx="135" cy="68"  r="30" fill="#0a0a0a"/>
+  <!-- Mickey silhouette — head -->
+  <circle cx="96"  cy="112" r="46" fill="#0a0a0a"/>
+
+  <!-- Gold star inside head -->
+  <text x="96" y="121"
+    text-anchor="middle"
+    font-size="26"
+    font-family="Arial, Helvetica, sans-serif"
+    fill="#FFD700"
+    opacity="0.92">&#9733;</text>
 </svg>
