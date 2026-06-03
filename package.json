@@ -1,0 +1,9 @@
+{
+  "name": "nobles-family-hunt",
+  "version": "1.0.0",
+  "description": "Nobles Family Singapore & Disney Adventure Scavenger Hunt",
+  "scripts": {
+    "dev": "npx serve . -p 3000 -s",
+    "start": "npx serve . -p 3000 -s"
+  }
+}
