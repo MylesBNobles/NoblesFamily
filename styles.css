@@ -614,3 +614,120 @@ body {
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,215,0,.25); border-radius: 2px; }
+
+/* ── Imagineered by Jeslin ───────────────────────────────── */
+.imagineered-wrap {
+  margin-top: 14px;
+  text-align: center;
+}
+
+.imagineered-by {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255,215,0,0.45);
+  margin-bottom: 4px;
+  opacity: 0;
+  animation: fade-in-label 0.6s ease forwards 1s;
+}
+
+@keyframes fade-in-label {
+  to { opacity: 1; }
+}
+
+/* Track holds the text + wand tip together */
+.imagineered-track {
+  position: relative;
+  display: inline-block;
+}
+
+/* The text — hidden behind clip, revealed left→right */
+.imagineered-text {
+  display: inline-block;
+  font-size: 26px;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 1px;
+  background: linear-gradient(100deg, #FFD700 0%, #FF6EC7 50%, #C084FC 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+  clip-path: inset(0 101% 0 0);
+  animation:
+    wand-draw   2s cubic-bezier(0.4, 0, 0.2, 1) 1.4s forwards,
+    text-shimmer 2.5s ease-in-out 4s infinite;
+}
+
+@keyframes wand-draw {
+  to { clip-path: inset(0 0% 0 0); }
+}
+
+@keyframes text-shimmer {
+  0%,100% { filter: brightness(1) drop-shadow(0 0 0px transparent); }
+  50%      { filter: brightness(1.35) drop-shadow(0 0 8px rgba(255,215,0,0.55)); }
+}
+
+/* Glowing wand tip that travels left → right */
+.wand-tip {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: #FFD700;
+  box-shadow:
+    0 0 6px  4px  rgba(255,215,0,0.9),
+    0 0 14px 8px  rgba(255,215,0,0.5),
+    0 0 26px 14px rgba(255,110,199,0.3);
+  opacity: 0;
+  z-index: 2;
+  pointer-events: none;
+  animation: wand-travel 2s cubic-bezier(0.4, 0, 0.2, 1) 1.4s forwards;
+}
+
+@keyframes wand-travel {
+  0%   { left: 0%;    opacity: 0; }
+  5%   { left: 2%;    opacity: 1; }
+  85%  { left: 98%;   opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  93%  { left: 100%;  opacity: 1; transform: translate(-50%, -50%) scale(2.2); }
+  100% { left: 100%;  opacity: 0; transform: translate(-50%, -50%) scale(0); }
+}
+
+/* Sparkle particles that burst after the wand finishes */
+.imagineered-spark {
+  position: absolute;
+  font-size: 11px;
+  opacity: 0;
+  pointer-events: none;
+  animation: spark-burst 0.8s ease-out forwards;
+}
+
+.s1 { top: -12px; left: 20%;  color: #FFD700; animation-delay: 3.3s; font-size: 10px; }
+.s2 { top: -16px; left: 50%;  color: #FF6EC7; animation-delay: 3.45s; font-size: 13px; }
+.s3 { top: -10px; left: 78%;  color: #C084FC; animation-delay: 3.35s; font-size: 9px; }
+.s4 { top:  -8px; left: 90%;  color: #FFD700; animation-delay: 3.5s;  font-size: 14px; }
+
+@keyframes spark-burst {
+  0%   { opacity: 0; transform: translateY(0)     scale(0); }
+  40%  { opacity: 1; transform: translateY(-12px) scale(1.2); }
+  100% { opacity: 0; transform: translateY(-28px) scale(0.6); }
+}
+
+/* After sparks, the text does a final glow pulse once */
+.imagineered-text::after {
+  content: ' ✦';
+  font-style: normal;
+  font-size: 14px;
+  -webkit-text-fill-color: rgba(255,215,0,0);
+  animation: final-star 0.5s ease-out 3.6s forwards;
+}
+
+@keyframes final-star {
+  0%   { -webkit-text-fill-color: rgba(255,215,0,0); }
+  50%  { -webkit-text-fill-color: rgba(255,215,0,1); }
+  100% { -webkit-text-fill-color: rgba(255,215,0,0.55); }
+}
