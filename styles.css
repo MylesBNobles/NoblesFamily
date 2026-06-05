@@ -731,3 +731,23 @@ body {
   50%  { -webkit-text-fill-color: rgba(255,215,0,1); }
   100% { -webkit-text-fill-color: rgba(255,215,0,0.55); }
 }
+
+/* ── Sync badge ──────────────────────────────────────────── */
+.sync-badge {
+  font-size: 10px; font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  letter-spacing: .3px;
+  flex-shrink: 0;
+  transition: all .3s;
+}
+.sync-badge.online {
+  background: rgba(0,229,204,.15);
+  color: var(--teal);
+  border: 1px solid rgba(0,229,204,.35);
+}
+.sync-badge.offline {
+  background: rgba(255,255,255,.05);
+  color: var(--text-3);
+  border: 1px solid rgba(255,255,255,.1);
+}

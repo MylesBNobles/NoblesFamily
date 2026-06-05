@@ -300,6 +300,7 @@ function toggle(itemId) {
   const justCompleted = !wasChecked && state.checked.length === TOTAL_ITEMS;
   saveState(state);
   renderHunt();
+  debouncedSync();
   if (justCompleted) triggerConfetti();
 }
 
@@ -317,35 +318,47 @@ function animateScore(val) {
 //  Leaderboard
 // ─────────────────────────────────────────────────────────────
 
-function renderLeaderboard() {
-  const players = loadPlayers();
+function renderLbRows(players) {
   if (players.length === 0) {
     lbList.innerHTML = `<div class="lb-empty"><div class="e-icon">🏆</div><p>No players yet — start the hunt!</p></div>`;
     return;
   }
-
-  const ranked = players
-    .map(name => loadState(name))
-    .sort((a, b) => b.pts - a.pts);
-
   const medals = ['🥇','🥈','🥉'];
-
-  lbList.innerHTML = ranked.map((s, i) => {
+  lbList.innerHTML = players.map((p, i) => {
     const rClass = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : '';
-    const isMe   = s.name === currentPlayer;
+    const isMe   = p.name === currentPlayer;
     const badge  = medals[i] || (i + 1);
-    const pct    = TOTAL_ITEMS > 0 ? Math.round(s.checked.length / TOTAL_ITEMS * 100) : 0;
+    const pct    = TOTAL_ITEMS > 0 ? Math.round(p.found / TOTAL_ITEMS * 100) : 0;
     return `
       <div class="lb-item ${rClass}${isMe ? ' me' : ''}">
         <div class="rank-num">${badge}</div>
-        <div class="lb-avatar">${s.name[0].toUpperCase()}</div>
+        <div class="lb-avatar">${p.name[0].toUpperCase()}</div>
         <div class="lb-info">
-          <div class="lb-name">${esc(s.name)}${isMe ? ' ✦' : ''}</div>
-          <div class="lb-prog">${s.checked.length}/${TOTAL_ITEMS} items · ${pct}%</div>
+          <div class="lb-name">${esc(p.name)}${isMe ? ' ✦' : ''}</div>
+          <div class="lb-prog">${p.found}/${TOTAL_ITEMS} items · ${pct}%</div>
         </div>
-        <div class="lb-score">${s.pts.toLocaleString()}</div>
+        <div class="lb-score">${p.pts.toLocaleString()}</div>
       </div>`;
   }).join('');
+}
+
+async function renderLeaderboard() {
+  // Phase 1: render local data immediately
+  const localPlayers = loadPlayers()
+    .map(name => { const s = loadState(name); return { name: s.name, pts: s.pts, found: s.checked.length }; })
+    .sort((a, b) => b.pts - a.pts);
+  renderLbRows(localPlayers);
+
+  // Phase 2: merge with remote and re-render
+  const remote = await fetchLeaderboard();
+  if (!remote) return;
+  const remoteNames = new Set(remote.map(r => r.player_name));
+  const localOnly   = localPlayers.filter(p => !remoteNames.has(p.name));
+  const allPlayers  = [
+    ...remote.map(r => ({ name: r.player_name, pts: r.total_points, found: r.items_found })),
+    ...localOnly,
+  ].sort((a, b) => b.pts - a.pts);
+  renderLbRows(allPlayers);
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -431,6 +444,90 @@ function esc(str) {
 }
 
 // ─────────────────────────────────────────────────────────────
+//  Supabase sync
+// ─────────────────────────────────────────────────────────────
+
+const SUPA_URL = 'https://pvvddgepzwkprtxualml.supabase.co';
+const SUPA_KEY = 'sb_publishable_QlYgYaqg_1bLVV9cX__xBQ_UCrOF_I_';
+
+let sb         = null;
+let syncTimer  = null;
+
+function getDeviceId() {
+  let id = localStorage.getItem('nh_device_id');
+  if (!id) {
+    id = (crypto.randomUUID ? crypto.randomUUID()
+         : Date.now().toString(36) + Math.random().toString(36).slice(2));
+    localStorage.setItem('nh_device_id', id);
+  }
+  return id;
+}
+
+function initSupabase() {
+  try {
+    sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+    subscribeRealtime();
+    updateOnlineBadge();
+  } catch { /* CDN blocked / offline — graceful degradation */ }
+}
+
+async function syncToSupabase() {
+  if (!sb || !currentPlayer) return;
+  const state = loadState(currentPlayer);
+  try {
+    await sb.from('hunt_scores').upsert({
+      device_id:    getDeviceId(),
+      player_name:  state.name,
+      total_points: state.pts,
+      items_found:  state.checked.length,
+      checked_items: state.checked,
+      updated_at:   new Date().toISOString(),
+    }, { onConflict: 'device_id' });
+  } catch {}
+}
+
+function debouncedSync() {
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(syncToSupabase, 1500);
+}
+
+async function fetchLeaderboard() {
+  if (!sb) return null;
+  try {
+    const { data, error } = await sb
+      .from('hunt_scores')
+      .select('player_name, total_points, items_found')
+      .order('total_points', { ascending: false });
+    if (error) return null;
+    return data;
+  } catch { return null; }
+}
+
+function subscribeRealtime() {
+  if (!sb) return;
+  sb.channel('scores-channel')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'hunt_scores' }, () => {
+      renderLeaderboard();
+    })
+    .subscribe();
+}
+
+function updateOnlineBadge() {
+  const badge = document.getElementById('sync-badge');
+  if (!badge) return;
+  if (navigator.onLine && sb) {
+    badge.textContent = '● Live';
+    badge.className   = 'sync-badge online';
+  } else {
+    badge.textContent = '○ Offline';
+    badge.className   = 'sync-badge offline';
+  }
+}
+
+window.addEventListener('online',  () => { updateOnlineBadge(); syncToSupabase(); });
+window.addEventListener('offline', () => { updateOnlineBadge(); });
+
+// ─────────────────────────────────────────────────────────────
 //  Service Worker
 // ─────────────────────────────────────────────────────────────
 
@@ -449,3 +546,4 @@ metaTotal.textContent = TOTAL_ITEMS;
 metaMax.textContent   = TOTAL_PTS.toLocaleString();
 document.getElementById('total-pts-badge').textContent =
   TOTAL_PTS.toLocaleString() + ' pts total';
+initSupabase();
