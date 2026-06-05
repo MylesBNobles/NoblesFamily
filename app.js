@@ -480,16 +480,15 @@ function initSupabase() {
 async function syncToSupabase() {
   if (!sb || !currentPlayer) return;
   const state = loadState(currentPlayer);
-  try {
-    await sb.from('hunt_scores').upsert({
-      device_id:    getDeviceId(),
-      player_name:  state.name,
-      total_points: state.pts,
-      items_found:  state.checked.length,
-      checked_items: state.checked,
-      updated_at:   new Date().toISOString(),
-    }, { onConflict: 'device_id' });
-  } catch {}
+  const { error } = await sb.from('hunt_scores').upsert({
+    device_id:    getDeviceId(),
+    player_name:  state.name,
+    total_points: state.pts,
+    items_found:  state.checked.length,
+    checked_items: state.checked,
+    updated_at:   new Date().toISOString(),
+  }, { onConflict: 'device_id,player_name' });
+  if (error) console.error('Sync error:', error);
 }
 
 function debouncedSync() {
