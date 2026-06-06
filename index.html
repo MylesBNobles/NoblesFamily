@@ -128,6 +128,23 @@
   </div>
 
   <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <!-- ── PLAYER PROFILE SHEET ──────────────────────────────── -->
+  <div id="profile-sheet" class="profile-sheet">
+    <div class="profile-backdrop" id="profile-backdrop"></div>
+    <div class="profile-card">
+      <div class="profile-handle"></div>
+      <div class="profile-header">
+        <div class="profile-avatar" id="profile-avatar"></div>
+        <div class="profile-info">
+          <div class="profile-name" id="profile-name"></div>
+          <div class="profile-stats" id="profile-stats"></div>
+        </div>
+        <button class="profile-close" id="profile-close">✕</button>
+      </div>
+      <div class="profile-list" id="profile-list"></div>
+    </div>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="app.js"></script>
 </body>

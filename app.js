@@ -339,7 +339,7 @@ function renderLbRows(players) {
     const badge  = medals[i] || (i + 1);
     const pct    = TOTAL_ITEMS > 0 ? Math.round(p.found / TOTAL_ITEMS * 100) : 0;
     return `
-      <div class="lb-item ${rClass}${isMe ? ' me' : ''}">
+      <div class="lb-item ${rClass}${isMe ? ' me' : ''}" onclick='showPlayerProfile(${JSON.stringify(p)})'>
         <div class="rank-num">${badge}</div>
         <div class="lb-avatar">${p.name[0].toUpperCase()}</div>
         <div class="lb-info">
@@ -347,6 +347,7 @@ function renderLbRows(players) {
           <div class="lb-prog">${p.found}/${TOTAL_ITEMS} items · ${pct}%</div>
         </div>
         <div class="lb-score">${p.pts.toLocaleString()}</div>
+        <div class="lb-chevron">›</div>
       </div>`;
   }).join('');
 }
@@ -354,7 +355,7 @@ function renderLbRows(players) {
 async function renderLeaderboard() {
   // Phase 1: render local data immediately
   const localPlayers = loadPlayers()
-    .map(name => { const s = loadState(name); return { name: s.name, pts: s.pts, found: s.checked.length }; })
+    .map(name => { const s = loadState(name); return { name: s.name, pts: s.pts, found: s.checked.length, checked: s.checked }; })
     .sort((a, b) => b.pts - a.pts);
   renderLbRows(localPlayers);
 
@@ -364,11 +365,53 @@ async function renderLeaderboard() {
   const remoteNames = new Set(remote.map(r => r.player_name));
   const localOnly   = localPlayers.filter(p => !remoteNames.has(p.name));
   const allPlayers  = [
-    ...remote.map(r => ({ name: r.player_name, pts: r.total_points, found: r.items_found })),
+    ...remote.map(r => ({ name: r.player_name, pts: r.total_points, found: r.items_found, checked: r.checked_items || [] })),
     ...localOnly,
   ].sort((a, b) => b.pts - a.pts);
   renderLbRows(allPlayers);
 }
+
+// ─────────────────────────────────────────────────────────────
+//  Player profile sheet
+// ─────────────────────────────────────────────────────────────
+
+function showPlayerProfile(player) {
+  const checked = new Set(Array.isArray(player.checked) ? player.checked : []);
+
+  document.getElementById('profile-avatar').textContent = player.name[0].toUpperCase();
+  document.getElementById('profile-name').textContent   = player.name;
+  document.getElementById('profile-stats').textContent  =
+    `${player.pts.toLocaleString()} pts · ${player.found} item${player.found !== 1 ? 's' : ''} found`;
+
+  const cats = [...new Set(HUNT_ITEMS.map(i => i.cat))];
+  const html = cats.map(cat => {
+    const items = HUNT_ITEMS.filter(i => i.cat === cat && checked.has(i.id));
+    if (!items.length) return '';
+    return `
+      <div class="profile-cat">
+        <div class="profile-cat-header">${esc(cat)}</div>
+        ${items.map(item => `
+          <div class="profile-item">
+            <span class="profile-check">✓</span>
+            <span class="profile-emoji">${item.emoji}</span>
+            <span class="profile-label">${esc(item.label)}</span>
+            <span class="profile-pts">${item.pts}</span>
+          </div>`).join('')}
+      </div>`;
+  }).filter(Boolean).join('');
+
+  document.getElementById('profile-list').innerHTML =
+    html || '<p class="profile-empty">No items checked yet</p>';
+
+  document.getElementById('profile-sheet').classList.add('active');
+}
+
+function closePlayerProfile() {
+  document.getElementById('profile-sheet').classList.remove('active');
+}
+
+document.getElementById('profile-close').addEventListener('click', closePlayerProfile);
+document.getElementById('profile-backdrop').addEventListener('click', closePlayerProfile);
 
 // ─────────────────────────────────────────────────────────────
 //  Navigation
@@ -504,7 +547,7 @@ async function fetchLeaderboard() {
   try {
     const { data, error } = await sb
       .from('hunt_scores')
-      .select('player_name, total_points, items_found')
+      .select('player_name, total_points, items_found, checked_items')
       .order('total_points', { ascending: false });
     if (error) return null;
     return data;
@@ -542,6 +585,9 @@ window.addEventListener('offline', () => { updateOnlineBadge(); });
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      window.location.reload();
+    });
   });
 }
 
