@@ -104,6 +104,8 @@ const HUNT_ITEMS = [
   { id:'nfb15', cat:'Nobles Family Bonus 👨‍👩‍👧‍👦', pts:25, emoji:'🛌', label:'Catch Akua trying to go to bed early' },
   { id:'nfb7',  cat:'Nobles Family Bonus 👨‍👩‍👧‍👦', pts:25, emoji:'📷', label:'Recreate a childhood family photo' },
   { id:'nfb16', cat:'Nobles Family Bonus 👨‍👩‍👧‍👦', pts:25, emoji:'📵', label:'Catch Shae being distracted on her phone while something important is going on' },
+  { id:'nfb17', cat:'Nobles Family Bonus 👨‍👩‍👧‍👦', pts:25, emoji:'🍽️', label:'Catch Akua and Kwame running late to dinner — photographic evidence required' },
+  { id:'nfb18', cat:'Nobles Family Bonus 👨‍👩‍👧‍👦', pts:25, emoji:'😱', label:'Jumpscare someone in the family' },
   { id:'nfb8',  cat:'Nobles Family Bonus 👨‍👩‍👧‍👦', pts:25, emoji:'👁️', label:'Take a photo where nobody looks at the camera' },
 
   // ── LEGENDARY CHALLENGES (50 pts) ────────────────────────
@@ -115,6 +117,7 @@ const HUNT_ITEMS = [
   { id:'leg6', cat:'Legendary Challenges 🏆', pts:50, emoji:'🌅', label:'Family photo on the Disney ship at sunset' },
   { id:'leg7', cat:'Legendary Challenges 🏆', pts:50, emoji:'💃', label:'Entire family performs a dance move together' },
   { id:'leg8', cat:'Legendary Challenges 🏆', pts:50, emoji:'🎶', label:'Entire family sings part of a Disney song together' },
+  { id:'leg9', cat:'Legendary Challenges 🏆', pts:50, emoji:'📚', label:'Learn a cultural fact about Singapore and teach the rest of the family about it' },
 
   // ── GRAND CHALLENGE (100 pts) ────────────────────────────
   { id:'grd1', cat:'Grand Challenge 💎', pts:100, emoji:'📸', label:'Get every single person on the trip into one photo — Marina Bay Sands, Gardens by the Bay, or the Disney Ship' },
