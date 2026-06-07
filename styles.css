@@ -222,6 +222,7 @@ body {
   display: flex;
   align-items: center;
   gap: 13px;
+  width: 100%;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--r);
@@ -231,6 +232,10 @@ body {
   backdrop-filter: blur(14px);
   user-select: none;
   -webkit-user-select: none;
+  text-align: left;
+  color: var(--text);
+  font-family: inherit;
+  font-size: inherit;
 }
 .player-card:active {
   transform: scale(.98);

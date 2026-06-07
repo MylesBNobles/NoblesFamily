@@ -191,20 +191,20 @@ function renderWelcome() {
     const s = loadState(name);
     const pct = TOTAL_ITEMS > 0 ? Math.round(s.checked.length / TOTAL_ITEMS * 100) : 0;
     return `
-      <div class="player-card" data-name="${esc(name)}">
+      <button class="player-card" data-name="${esc(name)}" type="button">
         <div class="p-avatar">${name[0].toUpperCase()}</div>
         <div class="p-meta">
           <div class="p-name">${esc(name)}</div>
           <div class="p-progress">${s.pts} pts · ${s.checked.length}/${TOTAL_ITEMS} items · ${pct}%</div>
         </div>
-        <button class="p-delete" data-name="${esc(name)}" aria-label="Delete player">
+        <div class="p-delete" data-name="${esc(name)}" role="button" aria-label="Delete player">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="3 6 5 6 21 6"/>
             <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
             <path d="M10 11v6M14 11v6M9 6V4h6v2"/>
           </svg>
-        </button>
-      </div>`;
+        </div>
+      </button>`;
   }).join('');
 
   playerListEl.querySelectorAll('.player-card').forEach(card => {
@@ -646,9 +646,6 @@ window.addEventListener('offline', () => { updateOnlineBadge(); });
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      window.location.reload();
-    });
   });
 }
 
