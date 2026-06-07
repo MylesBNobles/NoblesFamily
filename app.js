@@ -203,8 +203,70 @@ function renderWelcome() {
 
   playerListEl.querySelectorAll('.player-card').forEach(card => {
     card.addEventListener('click', () => startHunt(card.dataset.name));
+    attachLongPress(card, card.dataset.name);
   });
 }
+
+// ─────────────────────────────────────────────────────────────
+//  Long press + delete player
+// ─────────────────────────────────────────────────────────────
+
+let longPressTimer = null;
+
+function attachLongPress(el, name) {
+  el.addEventListener('touchstart', () => {
+    longPressTimer = setTimeout(() => {
+      navigator.vibrate && navigator.vibrate(40);
+      showDeleteModal(name);
+    }, 600);
+  }, { passive: true });
+  el.addEventListener('touchend',  () => clearTimeout(longPressTimer));
+  el.addEventListener('touchmove', () => clearTimeout(longPressTimer));
+}
+
+function showDeleteModal(name) {
+  const s = loadState(name);
+  document.getElementById('delete-avatar').textContent      = name[0].toUpperCase();
+  document.getElementById('delete-player-name').textContent = esc(name);
+  document.getElementById('delete-input').value             = '';
+  document.getElementById('delete-confirm').disabled        = true;
+  document.getElementById('delete-modal').dataset.name      = name;
+  document.getElementById('delete-modal').classList.add('active');
+}
+
+function closeDeleteModal() {
+  document.getElementById('delete-modal').classList.remove('active');
+  document.getElementById('delete-input').value = '';
+}
+
+async function confirmDeletePlayer() {
+  const name = document.getElementById('delete-modal').dataset.name;
+  if (!name) return;
+
+  // Remove from LocalStorage
+  savePlayers(loadPlayers().filter(p => p !== name));
+  localStorage.removeItem(keyState(name));
+
+  // Remove from Supabase (this device's row only)
+  if (sb) {
+    try {
+      await sb.from('hunt_scores')
+        .delete()
+        .eq('device_id', getDeviceId())
+        .eq('player_name', name);
+    } catch {}
+  }
+
+  closeDeleteModal();
+  renderWelcome();
+}
+
+document.getElementById('delete-input').addEventListener('input', e => {
+  document.getElementById('delete-confirm').disabled = e.target.value.trim() !== 'DELETE';
+});
+document.getElementById('delete-confirm').addEventListener('click', confirmDeletePlayer);
+document.getElementById('delete-cancel').addEventListener('click', closeDeleteModal);
+document.getElementById('delete-backdrop').addEventListener('click', closeDeleteModal);
 
 joinBtn.addEventListener('click', joinHunt);
 nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') joinHunt(); });

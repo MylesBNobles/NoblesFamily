@@ -752,6 +752,114 @@ body {
   border: 1px solid rgba(255,255,255,.1);
 }
 
+/* ── Delete modal ───────────────────────────────────────── */
+.delete-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.delete-modal.active {
+  pointer-events: all;
+  opacity: 1;
+}
+.delete-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.delete-card {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  background: linear-gradient(160deg, #1f0d3a, #0e1a55);
+  border: 1px solid rgba(255,80,80,.25);
+  border-radius: 20px;
+  padding: 28px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  transform: scale(.92);
+  transition: transform .25s cubic-bezier(.33,1,.68,1);
+}
+.delete-modal.active .delete-card { transform: scale(1); }
+.delete-avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff4444, #c0392b);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 900;
+}
+.delete-title {
+  font-size: 18px; font-weight: 800;
+  text-align: center;
+  color: var(--text);
+}
+.delete-warning {
+  font-size: 13px;
+  color: var(--text-2);
+  text-align: center;
+  line-height: 1.5;
+}
+.delete-input {
+  width: 100%;
+  background: rgba(255,255,255,.07);
+  border: 1.5px solid rgba(255,255,255,.15);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px; font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  letter-spacing: 2px;
+  margin-top: 4px;
+  pointer-events: auto;
+  user-select: text;
+  -webkit-user-select: text;
+}
+.delete-input:focus {
+  outline: none;
+  border-color: rgba(255,80,80,.5);
+}
+.delete-input::placeholder { letter-spacing: 0; font-weight: 400; color: var(--text-3); }
+.delete-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 4px;
+}
+.btn-cancel {
+  flex: 1;
+  padding: 13px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  color: var(--text-2);
+  font-size: 15px; font-weight: 700;
+  cursor: pointer;
+}
+.btn-delete {
+  flex: 1;
+  padding: 13px;
+  border-radius: 12px;
+  background: #c0392b;
+  border: none;
+  color: #fff;
+  font-size: 15px; font-weight: 700;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+.btn-delete:disabled { opacity: .35; cursor: default; }
+.btn-delete:not(:disabled) { background: #e74c3c; }
+
 /* ── Player profile sheet ────────────────────────────────── */
 .profile-sheet {
   position: fixed;

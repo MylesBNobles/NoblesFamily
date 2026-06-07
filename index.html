@@ -129,6 +129,24 @@
 
   <canvas id="confetti" aria-hidden="true"></canvas>
 
+  <!-- ── DELETE CONFIRMATION MODAL ────────────────────────── -->
+  <div id="delete-modal" class="delete-modal">
+    <div class="delete-backdrop" id="delete-backdrop"></div>
+    <div class="delete-card">
+      <div class="delete-avatar" id="delete-avatar"></div>
+      <h3 class="delete-title">Delete <span id="delete-player-name"></span>?</h3>
+      <p class="delete-warning">This will remove them from this device and permanently delete their score from the leaderboard.</p>
+      <input id="delete-input" class="delete-input" type="text"
+        placeholder="Type DELETE to confirm"
+        autocomplete="off" autocorrect="off"
+        autocapitalize="characters" spellcheck="false">
+      <div class="delete-actions">
+        <button class="btn-cancel" id="delete-cancel">Cancel</button>
+        <button class="btn-delete" id="delete-confirm" disabled>Delete</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ── PLAYER PROFILE SHEET ──────────────────────────────── -->
   <div id="profile-sheet" class="profile-sheet">
     <div class="profile-backdrop" id="profile-backdrop"></div>
