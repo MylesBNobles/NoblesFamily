@@ -209,6 +209,7 @@ function renderWelcome() {
   }).join('');
 
   playerListEl.querySelectorAll('.player-card').forEach(card => {
+    card.addEventListener('touchstart', () => nameInput.blur(), { passive: true });
     card.addEventListener('click', () => {
       nameInput.blur();
       startHunt(card.dataset.name);
