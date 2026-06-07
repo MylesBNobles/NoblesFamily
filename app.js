@@ -202,7 +202,10 @@ function renderWelcome() {
   }).join('');
 
   playerListEl.querySelectorAll('.player-card').forEach(card => {
-    card.addEventListener('click', () => startHunt(card.dataset.name));
+    card.addEventListener('click', () => {
+      nameInput.blur();
+      startHunt(card.dataset.name);
+    });
     attachLongPress(card, card.dataset.name);
   });
 }
@@ -214,14 +217,15 @@ function renderWelcome() {
 let longPressTimer = null;
 
 function attachLongPress(el, name) {
-  el.addEventListener('touchstart', () => {
+  el.addEventListener('pointerdown', () => {
     longPressTimer = setTimeout(() => {
       navigator.vibrate && navigator.vibrate(40);
       showDeleteModal(name);
     }, 600);
-  }, { passive: true });
-  el.addEventListener('touchend',  () => clearTimeout(longPressTimer));
-  el.addEventListener('touchmove', () => clearTimeout(longPressTimer));
+  });
+  el.addEventListener('pointerup',     () => clearTimeout(longPressTimer));
+  el.addEventListener('pointermove',   () => clearTimeout(longPressTimer));
+  el.addEventListener('pointercancel', () => clearTimeout(longPressTimer));
 }
 
 function showDeleteModal(name) {

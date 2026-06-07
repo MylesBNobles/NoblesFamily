@@ -229,6 +229,8 @@ body {
   cursor: pointer;
   transition: all .2s ease;
   backdrop-filter: blur(14px);
+  user-select: none;
+  -webkit-user-select: none;
 }
 .player-card:active {
   transform: scale(.98);
