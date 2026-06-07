@@ -152,6 +152,7 @@ function saveState(s) { localStorage.setItem(keyState(s.name), JSON.stringify(s)
 // ─────────────────────────────────────────────────────────────
 
 let currentPlayer = null;
+let searchQuery   = '';
 
 const TOTAL_PTS  = HUNT_ITEMS.reduce((s, i) => s + i.pts, 0);
 const TOTAL_ITEMS = HUNT_ITEMS.length;
@@ -317,20 +318,24 @@ function renderHunt() {
       </div>`;
   }
 
-  // group by category
-  const cats = [...new Set(HUNT_ITEMS.map(i => i.cat))];
-  huntList.innerHTML = cats.map(cat => {
-    const items = HUNT_ITEMS.filter(i => i.cat === cat);
-    const catPts = items[0].pts;
-    return `
-      <div class="cat-block">
-        <div class="cat-header">
-          ${esc(cat)}
-          <span class="cat-pts">${catPts} pts</span>
-        </div>
-        ${items.map(item => renderItem(item, state)).join('')}
-      </div>`;
-  }).join('');
+  // render list — grouped normally or as search results
+  if (searchQuery.trim()) {
+    renderSearchResults(state);
+  } else {
+    const cats = [...new Set(HUNT_ITEMS.map(i => i.cat))];
+    huntList.innerHTML = cats.map(cat => {
+      const items = HUNT_ITEMS.filter(i => i.cat === cat);
+      const catPts = items[0].pts;
+      return `
+        <div class="cat-block">
+          <div class="cat-header">
+            ${esc(cat)}
+            <span class="cat-pts">${catPts} pts</span>
+          </div>
+          ${items.map(item => renderItem(item, state)).join('')}
+        </div>`;
+    }).join('');
+  }
 
   huntList.querySelectorAll('.item').forEach(el => {
     el.addEventListener('click', () => toggle(el.dataset.id));
@@ -433,6 +438,65 @@ async function renderLeaderboard() {
 }
 
 // ─────────────────────────────────────────────────────────────
+//  Search
+// ─────────────────────────────────────────────────────────────
+
+const searchInput = document.getElementById('search-input');
+const searchClear = document.getElementById('search-clear');
+
+searchInput.addEventListener('input', e => {
+  searchQuery = e.target.value;
+  searchClear.style.display = searchQuery ? 'flex' : 'none';
+  renderHunt();
+});
+
+searchClear.addEventListener('click', () => {
+  searchQuery = '';
+  searchInput.value = '';
+  searchClear.style.display = 'none';
+  renderHunt();
+});
+
+function highlightMatch(text, q) {
+  const idx = text.toLowerCase().indexOf(q.toLowerCase());
+  if (idx === -1) return esc(text);
+  return esc(text.slice(0, idx))
+    + `<mark class="search-hl">${esc(text.slice(idx, idx + q.length))}</mark>`
+    + esc(text.slice(idx + q.length));
+}
+
+function renderSearchResults(state) {
+  const q = searchQuery.trim();
+  if (!q) return;
+
+  const matches = HUNT_ITEMS.filter(i =>
+    i.label.toLowerCase().includes(q.toLowerCase()) ||
+    i.cat.toLowerCase().includes(q.toLowerCase())
+  );
+
+  if (matches.length === 0) {
+    huntList.innerHTML = `<div class="search-empty">No matches for "<b>${esc(q)}</b>"</div>`;
+    return;
+  }
+
+  const checked = state.checked;
+  huntList.innerHTML = matches.map(item => {
+    const isChecked = checked.includes(item.id);
+    return `
+      <div class="item${isChecked ? ' checked' : ''}" data-id="${item.id}">
+        <div class="item-check">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0a1628" stroke-width="3.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="item-emoji">${item.emoji}</div>
+        <div class="item-label">${highlightMatch(item.label, q)}</div>
+        <div class="item-pts">${item.pts}</div>
+      </div>`;
+  }).join('');
+}
+
+// ─────────────────────────────────────────────────────────────
 //  Player profile sheet
 // ─────────────────────────────────────────────────────────────
 
@@ -485,6 +549,9 @@ function showScreen(target) {
 
 backBtn.addEventListener('click', () => {
   currentPlayer = null;
+  searchQuery = '';
+  searchInput.value = '';
+  searchClear.style.display = 'none';
   renderWelcome();
   showScreen(screenWelcome);
 });
