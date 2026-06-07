@@ -197,7 +197,13 @@ function renderWelcome() {
           <div class="p-name">${esc(name)}</div>
           <div class="p-progress">${s.pts} pts · ${s.checked.length}/${TOTAL_ITEMS} items · ${pct}%</div>
         </div>
-        <svg class="p-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        <button class="p-delete" data-name="${esc(name)}" aria-label="Delete player">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+            <path d="M10 11v6M14 11v6M9 6V4h6v2"/>
+          </svg>
+        </button>
       </div>`;
   }).join('');
 
@@ -206,27 +212,16 @@ function renderWelcome() {
       nameInput.blur();
       startHunt(card.dataset.name);
     });
-    attachLongPress(card, card.dataset.name);
+    card.querySelector('.p-delete').addEventListener('click', e => {
+      e.stopPropagation();
+      showDeleteModal(card.dataset.name);
+    });
   });
 }
 
 // ─────────────────────────────────────────────────────────────
-//  Long press + delete player
+//  Delete player
 // ─────────────────────────────────────────────────────────────
-
-let longPressTimer = null;
-
-function attachLongPress(el, name) {
-  el.addEventListener('pointerdown', () => {
-    longPressTimer = setTimeout(() => {
-      navigator.vibrate && navigator.vibrate(40);
-      showDeleteModal(name);
-    }, 600);
-  });
-  el.addEventListener('pointerup',     () => clearTimeout(longPressTimer));
-  el.addEventListener('pointermove',   () => clearTimeout(longPressTimer));
-  el.addEventListener('pointercancel', () => clearTimeout(longPressTimer));
-}
 
 function showDeleteModal(name) {
   const s = loadState(name);
