@@ -428,7 +428,7 @@ body {
   border: none;
   outline: none;
   padding: 11px 0;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text);
   -webkit-appearance: none;
 }
