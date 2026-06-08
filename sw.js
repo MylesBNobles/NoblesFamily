@@ -1,4 +1,4 @@
-const CACHE = 'nobles-hunt-v23';
+const CACHE = 'nobles-hunt-v24';
 
 const ASSETS = [
   './',

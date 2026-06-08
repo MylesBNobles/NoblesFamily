@@ -189,14 +189,11 @@ function renderWelcome() {
     return;
   }
   playerListEl.innerHTML = players.map(name => {
-    const s = loadState(name);
-    const pct = TOTAL_ITEMS > 0 ? Math.round(s.checked.length / TOTAL_ITEMS * 100) : 0;
     return `
       <button class="player-card" data-name="${esc(name)}" type="button">
         <div class="p-avatar">${name[0].toUpperCase()}</div>
         <div class="p-meta">
           <div class="p-name">${esc(name)}</div>
-          <div class="p-progress">${s.pts} pts · ${s.checked.length}/${TOTAL_ITEMS} items · ${pct}%</div>
         </div>
         <div class="p-delete" data-name="${esc(name)}">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
