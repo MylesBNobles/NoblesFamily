@@ -198,7 +198,7 @@ function renderWelcome() {
           <div class="p-name">${esc(name)}</div>
           <div class="p-progress">${s.pts} pts · ${s.checked.length}/${TOTAL_ITEMS} items · ${pct}%</div>
         </div>
-        <div class="p-delete" data-name="${esc(name)}" role="button" aria-label="Delete player">
+        <div class="p-delete" data-name="${esc(name)}">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="3 6 5 6 21 6"/>
             <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
